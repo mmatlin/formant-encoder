@@ -1,0 +1,4 @@
+TIMIT/
+WAV/
+__pycache__/
+*.csv
