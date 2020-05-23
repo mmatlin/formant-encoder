@@ -19,6 +19,8 @@ phn_vowel_ipa = {
     "axr": "ɚ"
 }
 
+ipa_class_index = {key: i for i, key in enumerate(phn_vowel_ipa.values())}
+
 def extract_monophthong_times(phn_path: str) -> List[Tuple[str, int, int]]:
     out = []
     with open(phn_path) as phn:

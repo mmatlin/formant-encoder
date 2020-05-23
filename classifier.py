@@ -2,12 +2,16 @@ import torch
 import pandas as pd
 from torch.utils.data import DataLoader
 from torch.utils.data import TensorDataset
+from output_writer import OutputWriter
 
-training_formants_path = "train_formants.csv"
+ow = OutputWriter(5)
+ow.write_to_csv(verbose=True)
 
 # Create Tensors to hold dependent/independent variable data
-train_ind = pd.read_csv(training_formants_path, usecols=[1,2,3,4,5], header=None)
-train_dep = pd.read_csv(training_formants_path, usecols=[0], header=None)
+train_csv = ow.get_cached_csv("train")
+train_ind = pd.read_csv(train_csv)[["f1","f2","f3","f4","f5"]]
+train_dep = pd.read_csv(train_csv)[["phone_class_index"]]
+
 x = torch.from_numpy(train_ind.values).float()
 y = torch.from_numpy(train_dep.values).long()
 print(x)
@@ -44,7 +48,7 @@ loss_fn = torch.nn.NLLLoss(reduction='sum')
 
 # Set up model learning parameters
 learning_rate = 1e-3
-epochs = 1#25
+epochs = 25
 optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.95)
 
 for epoch in range(epochs):

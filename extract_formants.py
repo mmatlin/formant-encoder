@@ -1,7 +1,7 @@
 from scipy.fft import fft
 from scipy.io import wavfile
 from scipy.interpolate import interp1d
-from convert_to_wav import convert_dir_to_wav
+from db_tools import convert_dir_to_wav
 import process_phn, numpy as np
 from smooth import smooth
 from typing import List, Tuple
@@ -11,18 +11,18 @@ FFT_SLICE_RADIUS = 50 # number of samples on either side of the center sample of
 MAX_FREQ = 8000 # assumed max frequency of voice data, since TIMIT data is at 16 kHz, so the Nyquist frequency is 8 kHz
 FORMANT_OVERLAP = 250 # number of minimum Hz between frequencies which are decided to be formants
 
-def extract_formants(wav_data_path: str, phn_data_path: str, plot = False) -> List[Tuple[str, Tuple[int, int, int, int, int]]]:
+def extract_formants(wav_path: str, phn_path: str, plot = False) -> List[Tuple[str, Tuple[int, int, int, int, int]]]:
     """
     Takes a path to a file storing data about the phones in an audio file as well as a path to the audio file.
     Returns a list of tuples, each of which contain (a) the phone for which a set of formants were extracted and (b) a tuple containing the formants.
     """
     out = []
-    phn_data = process_phn.extract_monophthong_times(phn_data_path)
-    _, wav_data = wavfile.read(wav_data_path)
+    phn_data = process_phn.extract_monophthong_times(phn_path)
+    _, wav_data = wavfile.read(wav_path)
 
     # If plot argument is True, print the transcript of the recording to provide context for the plots
     if plot:
-        txt_data_path = phn_data_path.replace("PHN", "TXT")
+        txt_data_path = phn_path.replace("PHN", "TXT")
         with open(txt_data_path) as transcript:
             print(transcript.read())
 
@@ -64,3 +64,4 @@ def extract_formants(wav_data_path: str, phn_data_path: str, plot = False) -> Li
         formants = sorted(formants, key=lambda x: x[0])
         out.append(tuple([vowel_phone, tuple(formant[0] for formant in formants)]))
     return out
+    
